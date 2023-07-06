@@ -73,7 +73,7 @@
     #- stdout_gtestlike_tests_report
     #- teamcity_tests_report
     #- warnings_report
-    #- xml_tests_report
+    - xml_tests_report
 
 # override the default extensions for your system and toolchain
 :extension:
