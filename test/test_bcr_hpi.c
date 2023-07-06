@@ -30,4 +30,13 @@ void test_bcr_hpi_GetDeviceId(void)
     TEST_ASSERT_EQUAL(0, cypd3177_get_silicon_id(&platform_ctx, &id));
 }
 
+void test_bcr_hpi_ThruPointers(void)
+{
+    uint16_t id;
+    platform_i2c_read_ExpectAnyArgsAndReturn(0);
+    uint16_t result2 = 2;
+    platform_i2c_read_ReturnThruPtr_outdata(&result2);
+    TEST_ASSERT_EQUAL(0, cypd3177_get_silicon_id(&platform_ctx, &id));
+}
+
 #endif // TEST
