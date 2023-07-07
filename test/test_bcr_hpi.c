@@ -46,27 +46,24 @@ void test_bcr_hpi_ReturnNeg1WhenInvalidInputHolder(void)
     TEST_ASSERT_EQUAL(-1, cypd3177_get_device_interrupt(&platform_ctx, NULL));
 }
 
-void test_bcr_hpi_DeviceModeGet(void)
+void test_bcr_hpi_DeviceModeGetRawVauleofModeReg(void)
 {
     uint8_t mode = 0;
     platform_i2c_read_ExpectAndReturn(NULL, DEVICE_MODE_REG, &mode, 1, 0);
+    uint8_t result = 0xfe;
+    platform_i2c_read_ReturnThruPtr_outdata(&result);
     TEST_ASSERT_EQUAL(0, cypd3177_get_device_mode(&platform_ctx, &mode));
+    TEST_ASSERT_EQUAL(0xfe, mode);
 }
 
 void test_bcr_hpi_GetDeviceId(void)
 {
     uint16_t id = 0;
     platform_i2c_read_ExpectAndReturn(NULL, SILICON_ID_REG, &id, 2, 0);
+    uint8_t reg[2] = {0xbe, 0xef};
+    platform_i2c_read_ReturnArrayThruPtr_outdata(reg, sizeof(reg));
     TEST_ASSERT_EQUAL(0, cypd3177_get_silicon_id(&platform_ctx, &id));
-}
-
-void test_bcr_hpi_ThruPointers(void)
-{
-    uint16_t id;
-    platform_i2c_read_ExpectAnyArgsAndReturn(0);
-    uint16_t result2 = 2;
-    platform_i2c_read_ReturnThruPtr_outdata(&result2);
-    TEST_ASSERT_EQUAL(0, cypd3177_get_silicon_id(&platform_ctx, &id));
+    TEST_ASSERT_EQUAL(0xbeef, id);
 }
 
 #endif // TEST
