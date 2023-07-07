@@ -3,23 +3,33 @@
 //
 
 #include "bcr_hpi.h"
+#include <stdbool.h>
+
+static bool ctx_is_valid(ctx_t *ctx)
+{
+    if (!ctx || !ctx->write_reg || !ctx->read_reg)
+        return false;
+    return true;
+}
+
+static bool input_valid(void *input)
+{
+    return (bool)input;
+}
 
 int32_t cypd3177_get_device_mode(ctx_t *ctx, uint8_t *mode)
 {
-    if (!ctx || !ctx->write_reg || !ctx->read_reg || !mode)
-    {
+    if (!ctx_is_valid(ctx) || !input_valid((void *)mode))
         return -1;
-    }
 
     return ctx->read_reg(ctx->handle, DEVICE_MODE_REG, mode, 1);
 }
 
 int32_t cypd3177_get_silicon_id(ctx_t *ctx, uint16_t *id)
 {
-    if (!ctx || !ctx->write_reg || !ctx->read_reg || !id)
-    {
+    if (!ctx_is_valid(ctx) || !input_valid((void *)id))
         return -1;
-    }
+
     uint8_t data[2] = {0};
     int32_t ret = ctx->read_reg(ctx->handle, SILICON_ID_REG, data, 2);
     if (ret < 0)
@@ -35,10 +45,9 @@ int32_t cypd3177_get_silicon_id(ctx_t *ctx, uint16_t *id)
 
 int32_t cypd3177_get_device_interrupt(ctx_t *ctx, dev_or_pd_int_e *device_int)
 {
-    if (!ctx || !ctx->write_reg || !ctx->read_reg || !device_int)
-    {
+    if (!ctx_is_valid(ctx) || !input_valid((void *)device_int))
         return -1;
-    }
+
     interrupt_reg_t interrupt_reg;
     int32_t ret = ctx->read_reg(ctx->handle, INTERRUPT_REG, (uint8_t *)&interrupt_reg, 1);
     if (ret < 0)

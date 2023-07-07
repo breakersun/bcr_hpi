@@ -16,6 +16,34 @@ void tearDown(void)
 {
 }
 
+void test_bcr_hpi_ReturnNeg1WhenInvalidCtx(void)
+{
+    uint16_t uint16_input_holder;
+    uint8_t uint8_input_holder;
+    // ctx is null
+    TEST_ASSERT_EQUAL(-1, cypd3177_get_silicon_id(NULL, &uint16_input_holder));
+    TEST_ASSERT_EQUAL(-1, cypd3177_get_device_mode(NULL, &uint8_input_holder));
+    TEST_ASSERT_EQUAL(-1, cypd3177_get_device_interrupt(NULL, &uint8_input_holder));
+    // write_reg is null
+    platform_ctx.write_reg = NULL;
+    TEST_ASSERT_EQUAL(-1, cypd3177_get_silicon_id(&platform_ctx, &uint16_input_holder));
+    TEST_ASSERT_EQUAL(-1, cypd3177_get_device_mode(&platform_ctx, &uint8_input_holder));
+    TEST_ASSERT_EQUAL(-1, cypd3177_get_device_interrupt(&platform_ctx, &uint8_input_holder));
+    // read_reg is null
+    platform_ctx.write_reg = platform_i2c_write;
+    platform_ctx.write_reg = NULL;
+    TEST_ASSERT_EQUAL(-1, cypd3177_get_silicon_id(&platform_ctx, &uint16_input_holder));
+    TEST_ASSERT_EQUAL(-1, cypd3177_get_device_mode(&platform_ctx, &uint8_input_holder));
+    TEST_ASSERT_EQUAL(-1, cypd3177_get_device_interrupt(&platform_ctx, &uint8_input_holder));
+}
+
+void test_bcr_hpi_ReturnNeg1WhenInvalidInputHolder(void)
+{
+    TEST_ASSERT_EQUAL(-1, cypd3177_get_silicon_id(&platform_ctx, NULL));
+    TEST_ASSERT_EQUAL(-1, cypd3177_get_device_mode(&platform_ctx, NULL));
+    TEST_ASSERT_EQUAL(-1, cypd3177_get_device_interrupt(&platform_ctx, NULL));
+}
+
 void test_bcr_hpi_DeviceModeGet(void)
 {
     uint8_t mode = 0;
